@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Poll {
+  id          String   @id @default(uuid())
+  question    String
+  duration    Int      // Duration in seconds
+  createdAt   DateTime @default(now())
+  endTime     DateTime
+  isActive    Boolean  @default(true)
+  options     Option[]
+  votes       Vote[]
+}
+
+model Option {
+  id      String @id @default(uuid())
+  text    String
+  pollId  String
+  poll    Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes   Vote[]
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  pollId    String
+  optionId  String
+  studentId String   // Unique identifier for the student (session-based)
+  studentName String
+  createdAt DateTime @default(now())
+  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  option    Option   @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, studentId]) // One vote per student per poll
+}
+
+model Student {
+  id        String   @id @default(uuid())
+  sessionId String   @unique // Browser session ID
+  name      String
+  createdAt DateTime @default(now())
+}
