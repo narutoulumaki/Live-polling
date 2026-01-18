@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// backend url - change this for local testing
+const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'https://live-polling-production-8fa8.up.railway.app';
 
 export interface PollOption {
   id: string;
@@ -67,22 +68,22 @@ export function useSocket(): UseSocketReturn {
     socketRef.current = socket;
 
     socket.on('connect', () => {
-      console.log('Socket connected:', socket.id);
+      console.log('connected to server');
       setIsConnected(true);
       setError(null);
     });
 
     socket.on('disconnect', () => {
-      console.log('Socket disconnected');
+      console.log('disconnected');
       setIsConnected(false);
     });
 
     socket.on('connect_error', (err) => {
-      console.error('Connection error:', err);
+      console.log('connection error', err);
       setError('Failed to connect to server. Retrying...');
     });
 
-    // Poll state (for initial load / reconnection)
+    // get poll when connecting/reconnecting
     socket.on('poll:state', (data: { poll: Poll | null; hasVoted?: boolean }) => {
       setCurrentPoll(data.poll);
       if (data.hasVoted !== undefined) {

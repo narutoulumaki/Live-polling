@@ -16,6 +16,7 @@ export function usePollTimer(endTime: string | null, duration: number): UsePollT
       return;
     }
 
+    // calc time left based on server endTime
     const calculateRemaining = () => {
       const end = new Date(endTime).getTime();
       const now = Date.now();

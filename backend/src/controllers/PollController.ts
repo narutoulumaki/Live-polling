@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { pollService } from '../services/PollService';
 
 export class PollController {
-  // Create a new poll (Teacher only)
+  // create poll - only teachers use this
   async createPoll(req: Request, res: Response) {
     try {
       const { question, options, duration } = req.body;
@@ -11,7 +11,7 @@ export class PollController {
         return res.status(400).json({ error: 'Question and at least 2 options are required' });
       }
 
-      const durationSeconds = duration || 60; // Default 60 seconds
+      const durationSeconds = duration || 60; // 60 sec default
 
       const poll = await pollService.createPoll({
         question,

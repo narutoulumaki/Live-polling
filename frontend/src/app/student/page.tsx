@@ -25,14 +25,14 @@ export default function StudentPage() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showChatPanel, setShowChatPanel] = useState(false);
-  const [showParticipants, setShowParticipants] = useState(false);
+  const [showParticipants, setShowParticipants] = useState(false); // not using this rn
 
   const { remainingTime, isExpired } = usePollTimer(
     currentPoll?.endTime || null,
     currentPoll?.duration || 0
   );
 
-  // Auto-join if name exists in session
+  // auto join if already entered name before (handles page refresh)
   useEffect(() => {
     if (isConnected && sessionId && studentName) {
       joinAsStudent(sessionId, studentName);

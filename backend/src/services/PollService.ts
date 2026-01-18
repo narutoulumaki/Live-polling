@@ -24,11 +24,11 @@ export interface PollWithResults {
 }
 
 class PollService {
-  // Create a new poll
+  // creates poll and saves to db
   async createPoll(input: CreatePollInput): Promise<PollWithResults> {
     const { question, options, duration } = input;
     
-    // Check if there's an active poll
+    // dont allow multiple active polls
     const activePoll = await this.getActivePoll();
     if (activePoll) {
       throw new Error('Cannot create a new poll while one is active. Wait for all students to answer or for the timer to expire.');
@@ -138,7 +138,7 @@ class PollService {
       throw new Error('Invalid option');
     }
 
-    // Check if student already voted (race condition prevention)
+    // check if already voted - prisma unique constraint handles race condition
     const existingVote = await prisma.vote.findUnique({
       where: {
         pollId_studentId: {

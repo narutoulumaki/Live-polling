@@ -8,6 +8,7 @@ export default function Home() {
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<'student' | 'teacher' | null>(null);
 
+  // just redirect to the role page
   const handleContinue = () => {
     if (selectedRole) {
       router.push(`/${selectedRole}`);

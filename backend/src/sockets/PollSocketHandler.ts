@@ -21,7 +21,7 @@ class PollSocketHandler {
 
   private setupSocketHandlers() {
     this.io.on('connection', (socket: Socket) => {
-      console.log(`Client connected: ${socket.id}`);
+      console.log('new connection:', socket.id);
 
       // Teacher joins
       socket.on('teacher:join', async () => {
@@ -37,13 +37,13 @@ class PollSocketHandler {
         const activePoll = await pollService.getActivePoll();
         socket.emit('poll:state', { poll: activePoll });
         
-        // Send connected students count and list
+        // send student info to teacher
         const studentCount = this.getStudentCount();
         const studentList = this.getStudentList();
         socket.emit('students:count', { count: studentCount });
         socket.emit('students:list', { students: studentList });
         
-        console.log('Teacher joined');
+        console.log('teacher connected');
       });
 
       // Student joins with name
@@ -78,7 +78,7 @@ class PollSocketHandler {
           this.io.to('teachers').emit('students:list', { students: studentList });
           this.io.to('teachers').emit('student:joined', { name, sessionId });
           
-          console.log(`Student joined: ${name} (${sessionId})`);
+          console.log('student joined:', name);
         } catch (error) {
           console.error('Error joining student:', error);
           socket.emit('error', { message: 'Failed to join' });
@@ -102,7 +102,7 @@ class PollSocketHandler {
           // Broadcast to all clients
           this.io.emit('poll:new', { poll });
           
-          console.log(`Poll created: ${poll.question}`);
+          console.log('poll created');
         } catch (error: any) {
           console.error('Error creating poll:', error);
           socket.emit('error', { message: error.message || 'Failed to create poll' });
@@ -127,7 +127,7 @@ class PollSocketHandler {
           // Broadcast updated results to all
           this.io.emit('poll:results', { poll });
           
-          console.log(`Vote received from ${user.name} for poll ${pollId}`);
+          console.log('vote from', user.name);
         } catch (error: any) {
           console.error('Error submitting vote:', error);
           socket.emit('error', { message: error.message || 'Failed to submit vote' });

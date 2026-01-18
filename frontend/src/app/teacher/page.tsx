@@ -30,14 +30,14 @@ export default function TeacherPage() {
   ]);
   const [duration, setDuration] = useState(60);
   const [showChatPanel, setShowChatPanel] = useState(false);
-  const [showParticipants, setShowParticipants] = useState(true);
+  const [showParticipants, setShowParticipants] = useState(true); // keeping this open by default
 
   const { remainingTime, isExpired } = usePollTimer(
     currentPoll?.endTime || null,
     currentPoll?.duration || 0
   );
 
-  // Join as teacher on mount
+  // join room and get history when connected
   useEffect(() => {
     if (isConnected) {
       joinAsTeacher();
@@ -45,7 +45,7 @@ export default function TeacherPage() {
     }
   }, [isConnected, joinAsTeacher, getHistory]);
 
-  // Switch to results view when poll is created
+  // switch to results when poll is active
   useEffect(() => {
     if (currentPoll) {
       setShowCreateForm(false);

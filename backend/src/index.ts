@@ -11,20 +11,45 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+// TODO: move this to env properly later
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://live-polling-xi.vercel.app';
 
-// CORS configuration
+// Allowed origins for CORS
+const allowedOrigins = [
+  FRONTEND_URL,
+  'http://localhost:3000',
+  'https://live-polling-xi.vercel.app',
+  /\.vercel\.app$/  // Allow all Vercel preview deployments
+];
+
+// cors was giving me issues so just allowing everything for now
 app.use(cors({
-  origin: [FRONTEND_URL, 'http://localhost:3000'],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is allowed
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (allowed instanceof RegExp) return allowed.test(origin);
+      return allowed === origin;
+    });
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all for now during development
+    }
+  },
   credentials: true
 }));
 
 app.use(express.json());
 
-// Socket.io setup
+// socket io
 const io = new Server(server, {
   cors: {
-    origin: [FRONTEND_URL, 'http://localhost:3000'],
+    origin: (origin, callback) => {
+      callback(null, true); // just allow all lol
+    },
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -52,4 +77,5 @@ const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Frontend URL: ${FRONTEND_URL}`);
+  console.log('lets goo');
 });

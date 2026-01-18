@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 const SESSION_KEY = 'polling_session_id';
 const NAME_KEY = 'polling_student_name';
 
+// stores session in sessionStorage so refresh doesnt lose data
+
 interface UseSessionReturn {
   sessionId: string;
   studentName: string | null;

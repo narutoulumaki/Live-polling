@@ -1,7 +1,7 @@
 import prisma from '../prisma';
 
 class StudentService {
-  // Register or get existing student
+  // register student or update name if exists
   async registerStudent(sessionId: string, name: string): Promise<{ id: string; sessionId: string; name: string }> {
     // Check if student with this session already exists
     const existing = await prisma.student.findUnique({
